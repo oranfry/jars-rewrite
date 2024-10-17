@@ -1,0 +1,31 @@
+# Jars Rewrite
+
+A utility for replaying jars master logs with modifications.
+
+## Config
+
+Define as many configs as you like, each being a .php file in the `configs` folder.
+
+Run the config (task) with `php rewrite.php CONFIG_NAME`, e.g., `php rewrite.php myportal`
+
+### Options
+
+...
+
+## Rewrite closure
+
+You may provide a closure to rewrite the master log as it is replayed.
+
+```
+// configs/myconfig.php
+return [
+    ...,
+    'rewrite' => function (object $line, ?object $parent, array &$add): ?bool { ... },
+]
+```
+
+**`$line`** - the line from the master log, to be rewritten
+**`$parent`** - if the line was nested inside another line, this is set to that other line for reference
+**`$add`** - an empty array to which you may add new lines, these are then injected into the master log after $line
+
+If you return `false` from your rewrite closure, the line is removed from the master log. If you return true or null (or don't have a return statement), the line is kept.
