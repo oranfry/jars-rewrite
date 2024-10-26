@@ -244,6 +244,8 @@ fclose($jars_error);
 
 proc_close($jars_process);
 
+unlink($fifo);
+
 if (!$failed && $map_file = @$config->id_map_file) {
     file_put_contents($map_file, json_encode($id_map, JSON_UNESCAPED_SLASHES));
 }
