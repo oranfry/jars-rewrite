@@ -36,23 +36,13 @@ function config_valid(object $config)
         $errorcount++;
     }
 
-    if (!$username = @$config->username) {
-        error_log("Please specify username in config");
-        $errorcount++;
-    }
-
-    if (!@$config->portal_class) {
-        error_log("Please specify portal_class in config");
-        $errorcount++;
-    }
-
     if (!@$config->jars_bin) {
         error_log("Please specify jars_bin in config");
         $errorcount++;
     }
 
-    if (!@$config->autoload) {
-        error_log("Please specify autoload in config");
+    if (!@$config->db_home) {
+        error_log("Please specify db_home in config");
         $errorcount++;
     }
 
@@ -158,15 +148,11 @@ function id_map_r(array $data, array $incoming_links, array $exclude)
 
 function jars_command(string $suffix, object $config, bool $masked = false)
 {
-    if ($env = implode(' ', array_map(fn ($key) => $key . "='" . ($masked ? '***' : escapeshellarg($config->env[$key])) . "'", array_keys($config->env ?? [])))) {
+    if ($env = implode(' ', array_map(fn ($key) => $key . "=" . ($masked ? '***' : escapeshellarg($config->env[$key])), array_keys($config->env ?? [])))) {
         $env .= ' ';
     }
 
-    $password = $masked ? '***' : $config->password;
-
-    $base_cmd = $env . "'$config->jars_bin' '--autoload=$config->autoload' '--connection-string=local:$config->portal_class,$config->db_home' -u '$config->username' -p '$password'";
-
-    return $base_cmd . ' ' . $suffix;
+    return $env . "'$config->jars_bin'" . ' ' . $suffix;
 }
 
 function log_error($message) {
